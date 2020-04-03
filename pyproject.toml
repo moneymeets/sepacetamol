@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "sepacetamol"
+version = "0.1.0"
+description = ""
+authors = ["Yury V. Zaytsev <yury@shurup.com>"]
+
+[tool.poetry.dependencies]
+python = "3.8.2"
+
+django = "^3.0"
+gunicorn = "*"
+whitenoise = "*"
+
+sepaxml = "*"
+
+[tool.poetry.dev-dependencies]
+django-debug-toolbar = "*"
+
+flake8 = "*"
+flake8-quotes = "*"
+flake8-coding = "*"
+flake8-commas = "*"
+flake8-import-order = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
