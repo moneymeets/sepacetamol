@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <h1>SEPAcetamol</h1>
+
+    <p>
+        Download the
+        <a href="{% static "sepa-xml-template.xlsx" %}">wire table template</a>, fill in the transactions and upload it to the SEPA XML generator.
+    </p>
+
+    <h2>Import transactions</h2>
+
+    <form method="post" enctype="multipart/form-data"> <!-- class="was-validated" -->
+
+        {% csrf_token %}
+
+        <div class="form-group">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><span class="material-icons text-muted">cloud_upload</span></span>
+                </div>
+                <div class="custom-file"><!-- is_invalid -->
+                    <input type="file" class="custom-file-input" id="transactions-file" name="transactions-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                    <label class="custom-file-label" for="transactions-file">Choose file or drag & drop here...</label>
+                </div>
+                <div class="invalid-feedback">Unable to process requested file!</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Process file</button>
+        </div>
+
+    </form>
+
+    {% if source_filename %}
+        <h2>Create SEPA XML file</h2>
+
+        <form method="post">
+
+            <h3>Sender metadata</h3>
+
+            <div class="form-group row">
+                <label for="exampleFormControlInput1" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="moneymeets GmbH" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="exampleFormControlInput1" class="col-sm-2 col-form-label">IBAN</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="DE12 3456 7890 1234 5678 90" required>
+                </div>
+            </div>
+
+            <h3>Transactions from {{ source_filename }}</h3>
+
+            <p>
+                <strong>Grand total: {{ grand_total }} €</strong>
+            </p>
+
+            {% csrf_token %}
+
+            <table class="table table-striped">
+
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">IBAN</th>
+                    <th scope="col">BIC</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Purpose</th>
+                    <th scope="col">Reference</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for transaction in transactions %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-name" name="transaction-name" value="{{ transaction.name }}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-iban" name="transaction-iban" value="{{ transaction.iban }}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-bic" name="transaction-bic" value="{{ transaction.bic }}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-amount" name="transaction-amount" value="{{ transaction.amount }}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-purpose" name="transaction-purpose" value="{{ transaction.purpose }}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="transaction-reference" name="transaction-reference" value="{{ transaction.reference }}">
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Download SEPA XML</button>
+            </div>
+
+        </form>
+
+    {% endif %}
+
+{% endblock %}
