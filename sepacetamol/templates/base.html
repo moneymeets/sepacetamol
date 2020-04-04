@@ -20,6 +20,10 @@
             padding-top: 1rem;
             padding-bottom: 1rem;
         }
+
+        footer {
+            padding-top: 1rem;
+        }
     </style>
 </head>
 
@@ -31,6 +35,17 @@
     {% endblock %}
 
 </main>
+
+<footer class="container">
+    <hr>
+    <div class="text-muted">
+        <p>
+            &copy; {% now "Y" %} Yury V. Zaytsev &mdash;
+            <a href="https://github.com/zyv">GitHub</a> &middot;
+            <a href="https://www.linkedin.com/in/yuryzaytsev/">LinkedIn</a>
+        </p>
+    </div>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
