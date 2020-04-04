@@ -95,6 +95,7 @@ def generate(request):
             "transaction-purpose",
             "transaction-reference",
     ))):
+        name, bic, purpose, reference = map(lambda item: item.strip(), (name, bic, purpose, reference))
         sepa.add_payment({
             "name": name,
             "IBAN": str(IBAN(iban)),
