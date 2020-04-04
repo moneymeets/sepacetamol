@@ -42,7 +42,6 @@ SESSION_COOKIE_SECURE = True if not DEBUG else False
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
