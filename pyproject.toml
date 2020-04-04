@@ -11,6 +11,8 @@ django = "^3.0"
 gunicorn = "*"
 whitenoise = "*"
 
+openpyxl = "*"
+schwifty = "*"
 sepaxml = "*"
 
 [tool.poetry.dev-dependencies]
