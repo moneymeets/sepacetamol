@@ -38,7 +38,7 @@ def index(request):
             iban = IBAN(iban)
             assert iban.validate(), "invalid iban"
 
-            bic = str(iban.bic)
+            bic = str(iban.bic) if iban.country_code == "DE" else ""
 
             transactions.append(
                 Transaction(
