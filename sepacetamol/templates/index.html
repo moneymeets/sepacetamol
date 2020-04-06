@@ -86,19 +86,19 @@
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>
-                            <input type="text" class="form-control" id="transaction-name" name="transaction-name" value="{{ transaction.name }}">
+                            <input type="text" class="form-control" id="transaction-name" name="transaction-name" value="{{ transaction.name }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-iban" name="transaction-iban" value="{{ transaction.iban }}">
+                            <input type="text" class="form-control" id="transaction-iban" name="transaction-iban" value="{{ transaction.iban }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-bic" name="transaction-bic" value="{{ transaction.bic }}">
+                            <input type="text" class="form-control" id="transaction-bic" name="transaction-bic" value="{{ transaction.bic }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-amount" name="transaction-amount" value="{{ transaction.amount }}">
+                            <input type="text" class="form-control" id="transaction-amount" name="transaction-amount" value="{{ transaction.amount }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-purpose" name="transaction-purpose" value="{{ transaction.purpose }}">
+                            <input type="text" class="form-control" id="transaction-purpose" name="transaction-purpose" value="{{ transaction.purpose }}" required>
                         </td>
                         <td>
                             <input type="text" class="form-control" id="transaction-reference" name="transaction-reference" value="{{ transaction.reference }}">
