@@ -104,7 +104,7 @@ def generate(request):
             "amount": int(float(amount) * 100),  # cents
             "description": purpose,
             "execution_date": timezone.now().date(),
-            "endtoend_id": reference,
+            "endtoend_id": reference if reference != "" else "NOTPROVIDED",
         })
 
     response = HttpResponse(content_type="application/xml")
