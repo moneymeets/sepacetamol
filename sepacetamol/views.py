@@ -47,7 +47,7 @@ def index(request):
                     bic=bic,
                     amount=amount,
                     purpose=purpose,
-                    reference=reference,
+                    reference=reference if reference is not None else "",
                 ),
             )
 
