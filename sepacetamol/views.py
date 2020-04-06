@@ -78,6 +78,7 @@ def generate(request):
 
     originator_iban = IBAN(originator_iban)
     assert originator_iban.validate(), "invalid iban"
+    assert originator_iban.country_code == "DE", "only German originator IBANs are supported"
 
     sepa = SepaTransfer({
         "name": originator_name,
