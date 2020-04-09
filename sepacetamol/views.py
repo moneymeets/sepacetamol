@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils import timezone
@@ -29,7 +30,7 @@ def parse_iban(iban: str) -> IBAN:
     try:
         return IBAN(iban)
     except ValueError as e:
-        raise HttpResponseBadRequest(e)
+        raise SuspiciousOperation(e)
 
 
 def index(request):
