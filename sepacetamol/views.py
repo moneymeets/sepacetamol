@@ -25,6 +25,13 @@ class Transaction:
     reference: str
 
 
+def parse_iban(iban: str) -> IBAN:
+    try:
+        return IBAN(iban)
+    except ValueError as e:
+        raise HttpResponseBadRequest(e)
+
+
 def index(request):
     transactions_file = request.FILES["transactions-file"] if request.method == "POST" else None
     transactions = []
@@ -35,8 +42,7 @@ def index(request):
         for row in worksheet.iter_rows(min_row=2, values_only=True):
             name, iban, amount, purpose, reference = (cell for cell in row)
 
-            iban = IBAN(iban)
-            assert iban.validate(), "invalid iban"
+            iban = parse_iban(iban)
 
             bic = str(iban.bic) if iban.country_code == "DE" else ""
 
@@ -52,7 +58,7 @@ def index(request):
             )
 
     name, iban = map(lambda item: request.session.get(item), ("originator-name", "originator-iban"))
-    originator = Originator(name=name, iban=IBAN(iban).formatted) if name and iban else None
+    originator = Originator(name=name, iban=parse_iban(iban).formatted) if name and iban else None
 
     source_filename = transactions_file.name if transactions_file is not None else None
     target_filename = source_filename.replace(".xlsx", ".xml") if source_filename is not None else None
@@ -76,8 +82,7 @@ def generate(request):
     originator_name = request.session["originator-name"] = request.POST["originator-name"].strip()
     originator_iban = request.session["originator-iban"] = request.POST["originator-iban"].strip()
 
-    originator_iban = IBAN(originator_iban)
-    assert originator_iban.validate(), "invalid iban"
+    originator_iban = parse_iban(originator_iban)
     assert originator_iban.country_code == "DE", "only German originator IBANs are supported"
 
     sepa = SepaTransfer({
@@ -99,7 +104,7 @@ def generate(request):
         name, bic, purpose, reference = map(lambda item: item.strip(), (name, bic, purpose, reference))
         sepa.add_payment({
             "name": name,
-            "IBAN": str(IBAN(iban)),
+            "IBAN": str(parse_iban(iban)),
             "BIC": bic,
             "amount": int(float(amount) * 100),  # cents
             "description": purpose,
