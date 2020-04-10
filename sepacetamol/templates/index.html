@@ -38,6 +38,8 @@
     {% if source_filename %}
         <h2>Create SEPA XML file</h2>
 
+        <p>Source file: <code>{{ source_filename }}</code>.</p>
+
         <form method="post" action="{% url 'generate' %}">
 
             <input type="hidden" name="target-filename" value="{{ target_filename }}">
@@ -110,7 +112,9 @@
 
             </table>
 
-            <p>Source: <var>{{ source_filename }}</var></p>
+            <p>
+                <strong>Batch booking settings</strong>
+            </p>
 
             <div class="form-group">
                 <div class="custom-control custom-checkbox">
