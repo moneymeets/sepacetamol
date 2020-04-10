@@ -14,6 +14,7 @@ from sepaxml import SepaTransfer
 class Originator:
     name: str
     iban: str
+    bic: str
 
 
 @dataclass
@@ -34,17 +35,24 @@ def parse_iban(iban: str) -> IBAN:
 
 
 def index(request):
-    transactions_file = request.FILES["transactions-file"] if request.method == "POST" else None
+    source_file = request.FILES["source-file"] if request.method == "POST" else None
+
+    originator = None
     transactions = []
 
     if request.method == "POST":
-        workbook = load_workbook(transactions_file)
-        worksheet = workbook.active
-        for row in worksheet.iter_rows(min_row=2, values_only=True):
-            name, iban, amount, purpose, reference = (cell for cell in row)
+        worksheet = load_workbook(source_file).active
+
+        (name, iban, *_), *_ = worksheet.iter_rows(min_row=2, max_row=2, values_only=True)
+        originator = Originator(name=name, iban=parse_iban(iban).formatted, bic=parse_iban(iban).bic)
+
+        for row in worksheet.iter_rows(min_row=4, values_only=True):
+            if not any(row):
+                continue
+
+            name, iban, amount, purpose, reference = row
 
             iban = parse_iban(iban)
-
             bic = str(iban.bic) if iban.country_code == "DE" else ""
 
             transactions.append(
@@ -58,10 +66,7 @@ def index(request):
                 ),
             )
 
-    name, iban = map(lambda item: request.session.get(item), ("originator-name", "originator-iban"))
-    originator = Originator(name=name, iban=parse_iban(iban).formatted) if name and iban else None
-
-    source_filename = transactions_file.name if transactions_file is not None else None
+    source_filename = source_file.name if source_file is not None else None
     target_filename = source_filename.replace(".xlsx", ".xml") if source_filename is not None else None
 
     return render(request, "index.html", {
