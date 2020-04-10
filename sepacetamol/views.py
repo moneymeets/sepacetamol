@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum, unique
 
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -78,12 +79,19 @@ def index(request):
     })
 
 
+@unique
+class BatchBooking(Enum):
+    TRUE = "true"
+    FALSE = "false"
+    SINGLE = "single"
+
+
 def generate(request):
     if request.method != "POST":
         return HttpResponseBadRequest
 
     target_filename = request.POST["target-filename"]
-    batch_booking = request.POST.get("batch-booking", False)
+    batch_booking = BatchBooking(request.POST["batch-booking"])
 
     originator = Originator(
         *[request.POST[field].strip() for field in ("originator-name", "originator-iban", "originator-bic")],
@@ -96,7 +104,7 @@ def generate(request):
         "name": originator.name,
         "IBAN": str(iban),
         "BIC": originator.bic,
-        "batch": batch_booking,
+        "batch": batch_booking != BatchBooking.SINGLE,
         "currency": "EUR",
     }, clean=True)
 
@@ -119,8 +127,13 @@ def generate(request):
             "endtoend_id": reference if reference != "" else "NOTPROVIDED",
         })
 
+    contents = sepa.export(validate=True)
+
+    if batch_booking == BatchBooking.FALSE:
+        contents = contents.replace(b"<BtchBookg>true", b"<BtchBookg>false")
+
     response = HttpResponse(content_type="application/xml")
     response["Content-Disposition"] = "attachment; filename=%s" % smart_str(target_filename)
-    response.write(sepa.export(validate=True))
+    response.write(contents)
 
     return response

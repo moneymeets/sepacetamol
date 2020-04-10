@@ -124,9 +124,20 @@
             </p>
 
             <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="batch-booking" name="batch-booking" checked>
-                    <label class="custom-control-label" for="batch-booking">Create batch booking</label>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="batch-false" name="batch-booking" class="custom-control-input" value="false" checked>
+                    <label class="custom-control-label" for="batch-false">Batch booking
+                        <code>false</code>, single payment information block</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="batch-true" name="batch-booking" class="custom-control-input" value="true">
+                    <label class="custom-control-label" for="batch-true">Batch booking
+                        <code>true</code>, single payment information block</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="batch-single" name="batch-booking" class="custom-control-input" value="single">
+                    <label class="custom-control-label" for="batch-single">Batch booking
+                        <code>false</code>, multiple payment information blocks</label>
                 </div>
             </div>
 
