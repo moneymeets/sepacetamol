@@ -85,16 +85,17 @@ def generate(request):
     target_filename = request.POST["target-filename"]
     batch_booking = request.POST.get("batch-booking", False)
 
-    originator_name = request.session["originator-name"] = request.POST["originator-name"].strip()
-    originator_iban = request.session["originator-iban"] = request.POST["originator-iban"].strip()
+    originator = Originator(
+        *[request.POST[field].strip() for field in ("originator-name", "originator-iban", "originator-bic")],
+    )
 
-    originator_iban = parse_iban(originator_iban)
-    assert originator_iban.country_code == "DE", "only German originator IBANs are supported"
+    iban = parse_iban(originator.iban)
+    assert iban.country_code == "DE", "only German originator IBANs are supported"
 
     sepa = SepaTransfer({
-        "name": originator_name,
-        "IBAN": str(originator_iban),
-        "BIC": str(originator_iban.bic),
+        "name": originator.name,
+        "IBAN": str(iban),
+        "BIC": originator.bic,
         "batch": batch_booking,
         "currency": "EUR",
     }, clean=True)
