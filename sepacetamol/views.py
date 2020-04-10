@@ -32,7 +32,7 @@ def parse_iban(iban: str) -> IBAN:
     try:
         return IBAN(iban)
     except ValueError as e:
-        raise SuspiciousOperation(e)
+        raise SuspiciousOperation(e) from e
 
 
 def index(request):
