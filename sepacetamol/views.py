@@ -108,15 +108,15 @@ def generate(request):
         "currency": "EUR",
     }, clean=True)
 
-    for name, iban, bic, amount, purpose, reference in zip(*map(lambda item: request.POST.getlist(item), (
-            "transaction-name",
-            "transaction-iban",
-            "transaction-bic",
-            "transaction-amount",
-            "transaction-purpose",
-            "transaction-reference",
-    ))):
-        name, bic, purpose, reference = map(lambda item: item.strip(), (name, bic, purpose, reference))
+    for name, iban, bic, amount, purpose, reference in zip(
+            *((field.strip() for field in request.POST.getlist(item)) for item in (
+                    "transaction-name",
+                    "transaction-iban",
+                    "transaction-bic",
+                    "transaction-amount",
+                    "transaction-purpose",
+                    "transaction-reference",
+            ))):
         sepa.add_payment({
             "name": name,
             "IBAN": str(parse_iban(iban)),
