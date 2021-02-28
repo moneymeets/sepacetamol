@@ -70,13 +70,17 @@ def index(request):
     source_filename = source_file.name if source_file is not None else None
     target_filename = source_filename.replace(".xlsx", ".xml") if source_filename is not None else None
 
-    return render(request, "index.html", {
-        "source_filename": source_filename,
-        "target_filename": target_filename,
-        "originator": originator,
-        "transactions": transactions,
-        "grand_total": sum(transaction.amount for transaction in transactions),
-    })
+    return render(
+        request,
+        "index.html",
+        {
+            "source_filename": source_filename,
+            "target_filename": target_filename,
+            "originator": originator,
+            "transactions": transactions,
+            "grand_total": sum(transaction.amount for transaction in transactions),
+        },
+    )
 
 
 @unique
@@ -100,32 +104,41 @@ def generate(request):
     iban = parse_iban(originator.iban)
     assert iban.country_code == "DE", "only German originator IBANs are supported"
 
-    sepa = SepaTransfer({
-        "name": originator.name,
-        "IBAN": str(iban),
-        "BIC": originator.bic,
-        "batch": batch_booking != BatchBooking.SINGLE,
-        "currency": "EUR",
-    }, clean=True)
+    sepa = SepaTransfer(
+        {
+            "name": originator.name,
+            "IBAN": str(iban),
+            "BIC": originator.bic,
+            "batch": batch_booking != BatchBooking.SINGLE,
+            "currency": "EUR",
+        },
+        clean=True,
+    )
 
     for name, iban, bic, amount, purpose, reference in zip(
-            *((field.strip() for field in request.POST.getlist(item)) for item in (
-                    "transaction-name",
-                    "transaction-iban",
-                    "transaction-bic",
-                    "transaction-amount",
-                    "transaction-purpose",
-                    "transaction-reference",
-            ))):
-        sepa.add_payment({
-            "name": name,
-            "IBAN": str(parse_iban(iban)),
-            "BIC": bic,
-            "amount": int(float(amount) * 100),  # cents
-            "description": purpose,
-            "execution_date": timezone.now().date(),
-            "endtoend_id": reference if reference != "" else "NOTPROVIDED",
-        })
+        *(
+            (field.strip() for field in request.POST.getlist(item))
+            for item in (
+                "transaction-name",
+                "transaction-iban",
+                "transaction-bic",
+                "transaction-amount",
+                "transaction-purpose",
+                "transaction-reference",
+            )
+        )
+    ):
+        sepa.add_payment(
+            {
+                "name": name,
+                "IBAN": str(parse_iban(iban)),
+                "BIC": bic,
+                "amount": int(float(amount) * 100),  # cents
+                "description": purpose,
+                "execution_date": timezone.now().date(),
+                "endtoend_id": reference if reference != "" else "NOTPROVIDED",
+            }
+        )
 
     contents = sepa.export(validate=True)
 
