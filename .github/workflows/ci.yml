@@ -15,7 +15,7 @@ jobs:
         uses: moneymeets/action-setup-poetry@master
 
       - name: Restore virtualenv from Poetry cache
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         id: poetry-cache
         with:
           path: ~/.cache/pypoetry/virtualenvs
