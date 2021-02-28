@@ -1,15 +1,15 @@
 [tool.poetry]
 name = "sepacetamol"
 version = "0.1.0"
-description = ""
+description = "PAIN Credit Transfer XML file generator"
 authors = ["Yury V. Zaytsev <yury@shurup.com>"]
 
 [tool.poetry.dependencies]
-python = "3.8.2"
+python = ">= 3.8"
 
 django = "^3.0"
 gunicorn = "*"
-whitenoise = "*"
+whitenoise = { version = "*", extras = ["brotli"] }
 
 openpyxl = "*"
 schwifty = "*"
@@ -19,11 +19,27 @@ sepaxml = "*"
 django-debug-toolbar = "*"
 
 flake8 = "*"
+flake8-black = "*"
 flake8-quotes = "*"
 flake8-coding = "*"
 flake8-commas = "*"
 flake8-import-order = "*"
 
+black = "*"
+
+[tool.black]
+line-length = 120
+target-version = ["py38"]
+exclude = '''
+(
+  /(
+      \.git         # exclude a few common directories in the
+    | migrations    # exclude all migrations folders (auto generated code)
+  )/
+)
+'''
+
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
