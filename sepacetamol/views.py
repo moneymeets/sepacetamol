@@ -126,7 +126,7 @@ def generate(request):
                 "transaction-purpose",
                 "transaction-reference",
             )
-        )
+        ),
     ):
         sepa.add_payment(
             {
@@ -137,7 +137,7 @@ def generate(request):
                 "description": purpose,
                 "execution_date": timezone.now().date(),
                 "endtoend_id": reference if reference != "" else "NOTPROVIDED",
-            }
+            },
         )
 
     contents = sepa.export(validate=True)
