@@ -29,15 +29,7 @@ black = "*"
 
 [tool.black]
 line-length = 120
-target-version = ["py38"]
-exclude = '''
-(
-  /(
-      \.git         # exclude a few common directories in the
-    | migrations    # exclude all migrations folders (auto generated code)
-  )/
-)
-'''
+target-version = ["py310"]
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
