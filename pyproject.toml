@@ -5,7 +5,7 @@ description = "PAIN Credit Transfer XML file generator"
 authors = ["Yury V. Zaytsev <yury@shurup.com>"]
 
 [tool.poetry.dependencies]
-python = ">= 3.8"
+python = ">= 3.10"
 
 django = "*"
 gunicorn = "*"
@@ -20,16 +20,21 @@ django-debug-toolbar = "*"
 
 flake8 = "*"
 flake8-black = "*"
-flake8-quotes = "*"
 flake8-coding = "*"
-flake8-commas = "*"
-flake8-import-order = "*"
+flake8-isort = "*"
+flake8-quotes = "*"
 
 black = "*"
+isort = {extras = ["pyproject"], version = "*"}
+add-trailing-comma = "*"
 
 [tool.black]
 line-length = 120
 target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
