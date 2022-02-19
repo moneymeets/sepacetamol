@@ -45,7 +45,7 @@ def index(request):
         worksheet = load_workbook(source_file).active
 
         (name, iban, *_), *_ = worksheet.iter_rows(min_row=2, max_row=2, values_only=True)
-        originator = Originator(name=name, iban=parse_iban(iban).formatted, bic=parse_iban(iban).bic)
+        originator = Originator(name=name, iban=parse_iban(iban).formatted, bic=parse_iban(iban).bic.compact)
 
         for row in worksheet.iter_rows(min_row=4, values_only=True):
             if not any(row):
@@ -59,7 +59,7 @@ def index(request):
             transactions.append(
                 Transaction(
                     name=name,
-                    iban=iban.formatted,
+                    iban=iban.compact,
                     bic=bic,
                     amount=amount,
                     purpose=purpose,
