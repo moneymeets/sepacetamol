@@ -8,6 +8,7 @@ authors = ["Yury V. Zaytsev <yury@shurup.com>"]
 python = ">= 3.10"
 
 django = "*"
+django-bootstrap5 = "*"
 gunicorn = "*"
 whitenoise = { version = "*", extras = ["brotli"] }
 

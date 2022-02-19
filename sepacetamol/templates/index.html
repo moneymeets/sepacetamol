@@ -12,24 +12,16 @@
 
     <h2>Import transactions</h2>
 
-    <form method="post" enctype="multipart/form-data"> <!-- class="was-validated" -->
+    <form class="mb-3" method="post" enctype="multipart/form-data">
 
         {% csrf_token %}
 
-        <div class="form-group">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><span class="material-icons text-muted">cloud_upload</span></span>
-                </div>
-                <div class="custom-file"><!-- is_invalid -->
-                    <input type="file" class="custom-file-input" id="source-file" name="source-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
-                    <label class="custom-file-label" for="source-file">Choose file or drag &amp; drop here...</label>
-                </div>
-                <div class="invalid-feedback">Unable to process requested file!</div>
-            </div>
+        <div class="col-auto mb-3">
+            <input type="file" class="form-control" id="source-file" name="source-file"
+                   accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
         </div>
 
-        <div class="form-group">
+        <div class="col-auto">
             <button type="submit" class="btn btn-primary">Process file</button>
         </div>
 
@@ -40,38 +32,39 @@
 
         <p>Source file: <code>{{ source_filename }}</code>.</p>
 
-        <form method="post" action="{% url 'generate' %}">
+        <form class="mb-3" method="post" action="{% url 'generate' %}">
 
             <input type="hidden" name="target-filename" value="{{ target_filename }}">
 
             <h3>Sender metadata</h3>
 
-            <div class="form-group row">
+            <div class="row mb-3">
                 <label for="originator-name" class="col-sm-1 col-form-label">Name</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="originator-name" name="originator-name" value="{{ originator.name }}" placeholder="honeymeets continuity GmbH" required>
+                    <input type="text" class="form-control" id="originator-name" name="originator-name"
+                           value="{{ originator.name }}" placeholder="honeymeets continuity GmbH" required>
                 </div>
             </div>
 
-            <div class="form-group row">
+            <div class="row mb-3">
                 <label for="originator-iban" class="col-sm-1 col-form-label">IBAN</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="originator-iban" name="originator-iban" value="{{ originator.iban }}" placeholder="DE12 3456 7890 1234 5678 90" required>
+                    <input type="text" class="form-control" id="originator-iban" name="originator-iban"
+                           value="{{ originator.iban }}" placeholder="DE12 3456 7890 1234 5678 90" required>
                 </div>
             </div>
 
-            <div class="form-group row">
+            <div class="row mb-3">
                 <label for="originator-bic" class="col-sm-1 col-form-label">BIC</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="originator-bic" name="originator-bic" value="{{ originator.bic }}" placeholder="AACSDE33" required>
+                    <input type="text" class="form-control" id="originator-bic" name="originator-bic"
+                           value="{{ originator.bic }}" placeholder="AACSDE33" required>
                 </div>
             </div>
 
             <h3>Imported transactions</h3>
 
-            <p>
-                <strong>Grand total: {{ grand_total }} €</strong>
-            </p>
+            <p><strong>Grand total: {{ grand_total }} €</strong></p>
 
             {% csrf_token %}
 
@@ -93,24 +86,30 @@
 
                 {% for transaction in transactions %}
                     <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
+                        <th scope="row" class="align-middle">{{ forloop.counter }}</th>
                         <td>
-                            <input type="text" class="form-control" id="transaction-name" name="transaction-name" value="{{ transaction.name }}" required>
+                            <input type="text" class="form-control" name="transaction-name"
+                                   value="{{ transaction.name }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-iban" name="transaction-iban" value="{{ transaction.iban }}" required>
+                            <input type="text" class="form-control" name="transaction-iban"
+                                   value="{{ transaction.iban }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-bic" name="transaction-bic" value="{{ transaction.bic }}" required>
+                            <input type="text" class="form-control" name="transaction-bic"
+                                   value="{{ transaction.bic }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-amount" name="transaction-amount" value="{{ transaction.amount }}" required>
+                            <input type="text" class="form-control" name="transaction-amount"
+                                   value="{{ transaction.amount }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-purpose" name="transaction-purpose" value="{{ transaction.purpose }}" required>
+                            <input type="text" class="form-control" name="transaction-purpose"
+                                   value="{{ transaction.purpose }}" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="transaction-reference" name="transaction-reference" value="{{ transaction.reference }}">
+                            <input type="text" class="form-control" name="transaction-reference"
+                                   value="{{ transaction.reference }}">
                         </td>
                     </tr>
                 {% endfor %}
@@ -119,29 +118,30 @@
 
             </table>
 
-            <p>
-                <strong>Batch booking settings</strong>
-            </p>
+            <fieldset class="col-auto mb-3">
+                <legend class="col-form-label"><strong>Batch booking settings </strong></legend>
 
-            <div class="form-group">
-                <div class="custom-control custom-radio">
-                    <input type="radio" id="batch-false" name="batch-booking" class="custom-control-input" value="false" checked>
-                    <label class="custom-control-label" for="batch-false">Batch booking
+                <div class="form-check">
+                    <input type="radio" id="batch-false" name="batch-booking" class="form-check-input" value="false"
+                           checked>
+                    <label class="form-check-label" for="batch-false">Batch booking
                         <code>false</code>, single payment information block</label>
                 </div>
-                <div class="custom-control custom-radio">
-                    <input type="radio" id="batch-true" name="batch-booking" class="custom-control-input" value="true">
-                    <label class="custom-control-label" for="batch-true">Batch booking
+
+                <div class="form-check">
+                    <input type="radio" id="batch-true" name="batch-booking" class="form-check-input" value="true">
+                    <label class="form-check-label" for="batch-true">Batch booking
                         <code>true</code>, single payment information block</label>
                 </div>
-                <div class="custom-control custom-radio">
-                    <input type="radio" id="batch-single" name="batch-booking" class="custom-control-input" value="single">
-                    <label class="custom-control-label" for="batch-single">Batch booking
+
+                <div class="form-check">
+                    <input type="radio" id="batch-single" name="batch-booking" class="form-check-input" value="single">
+                    <label class="form-check-label" for="batch-single">Batch booking
                         <code>false</code>, multiple payment information blocks</label>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="form-group">
+            <div class="col-auto">
                 <button type="submit" class="btn btn-primary">Generate SEPA XML file</button>
             </div>
 
