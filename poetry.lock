@@ -305,7 +305,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "schwifty"
-version = "2022.7.1"
+version = "2022.9.0"
 description = "Validate/generate IBANs and BICs"
 category = "main"
 optional = false
@@ -612,8 +612,8 @@ pyflakes = [
     {file = "pyflakes-2.5.0.tar.gz", hash = "sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3"},
 ]
 schwifty = [
-    {file = "schwifty-2022.7.1-py3-none-any.whl", hash = "sha256:48f9a29c385c5184880e1d8d584c2be553bce0a7187753ffb8758eec0c9ec431"},
-    {file = "schwifty-2022.7.1.tar.gz", hash = "sha256:5f4ce9df9885fe74211f19b959f46face0d1b7b9a41d328feb360c66509301af"},
+    {file = "schwifty-2022.9.0-py3-none-any.whl", hash = "sha256:a38c950d9dcda57670a17ae408a5efcc86b5f0433fc8412e65b3220c04942e63"},
+    {file = "schwifty-2022.9.0.tar.gz", hash = "sha256:ff3c4ad2951f8391b9c3d13e401b751f5d8b77981673e59a91074d5513121620"},
 ]
 sepaxml = [
     {file = "sepaxml-2.5.0-py3-none-any.whl", hash = "sha256:06d72ef9514e17e7b59cd49ca898e6aa9f2a895eef4282d03a443faea64f231d"},
