@@ -1,0 +1,28 @@
+name: Deploy
+on: [ deployment ]
+jobs:
+  deploy-heroku:
+    runs-on: ubuntu-22.04
+    env:
+      PROJECT_NAME: sepacetamol
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: moneymeets/moneymeets-composite-actions/set-deployment-status@master
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          state: in_progress
+
+      - uses: moneymeets/action-heroku-deploy@master
+        with:
+          HEROKU_APP: ${{ env.PROJECT_NAME }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
+
+      - uses: moneymeets/moneymeets-composite-actions/set-deployment-status@master
+        if: always()
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          state: ${{ job.status == 'success' && 'success' || 'failure' }}
