@@ -9,10 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python and Poetry
-        uses: moneymeets/action-setup-python-poetry@master
+      - uses: moneymeets/action-setup-python-poetry@master
 
-      - name: Run linter
-        run: |
-          find . -name '*.py' | xargs poetry run add-trailing-comma --py36-plus
-          poetry run flake8
+      - uses: moneymeets/moneymeets-composite-actions/lint-python@master
