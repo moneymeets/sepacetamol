@@ -27,6 +27,7 @@ DEFAULT_SECRET_KEY = "+52hg76dt$*0!(7=_+q#a!@+*kf+!6cg379#q2dypnulfc=916"
 SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_SECRET_KEY)
 
 ALLOWED_HOSTS = ["sepacetamol.herokuapp.com"] if not DEBUG else ["*"]
+INTERNAL_IPS = os.environ["INTERNAL_IPS"].split(",") if not DEBUG else ["127.0.0.1"]
 
 CSRF_COOKIE_SECURE = True if not DEBUG else False
 SECURE_HSTS_SECONDS = 3600 if not DEBUG else 0
