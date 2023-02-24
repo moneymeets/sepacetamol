@@ -6,8 +6,6 @@ on: [ deployment ]
 jobs:
   deploy-heroku:
     runs-on: ubuntu-22.04
-    env:
-      PROJECT_NAME: "sepacetamol"
 
     steps:
       - uses: actions/checkout@v3
@@ -21,13 +19,13 @@ jobs:
 
       - uses: moneymeets/action-heroku-deploy@master
         with:
-          HEROKU_APP: "${{ env.PROJECT_NAME }}"
+          HEROKU_APP: sepacetamol
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
 
       - uses: getsentry/action-release@v1
         env:
           SENTRY_ORG: moneymeets
-          SENTRY_PROJECT: ${{ env.PROJECT_NAME }}
+          SENTRY_PROJECT: sepacetamol
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_MONEYMEETS_TOKEN }}
         with:
           environment: ${{ github.event.deployment.environment }}
