@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum, unique
+from enum import StrEnum, auto, unique
 
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -84,10 +84,10 @@ def index(request):
 
 
 @unique
-class BatchBooking(Enum):
-    TRUE = "true"
-    FALSE = "false"
-    SINGLE = "single"
+class BatchBooking(StrEnum):
+    TRUE = auto()
+    FALSE = auto()
+    SINGLE = auto()
 
 
 def generate(request):
