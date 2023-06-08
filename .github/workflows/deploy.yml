@@ -6,6 +6,9 @@ on: [ deployment ]
 jobs:
   deploy-heroku:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      deployments: write
 
     steps:
       - uses: actions/checkout@v3
