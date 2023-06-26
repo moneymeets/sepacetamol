@@ -530,14 +530,14 @@ files = [
 
 [[package]]
 name = "schwifty"
-version = "2023.3.0"
+version = "2023.6.0"
 description = "Validate/generate IBANs and BICs"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "schwifty-2023.3.0-py3-none-any.whl", hash = "sha256:4047326eb249b41a90cf13441407e8e03d4b6f5c78587cf5a9a5ffca0ae7a96a"},
-    {file = "schwifty-2023.3.0.tar.gz", hash = "sha256:527f49d58cedd3cd2f677af3a1551136931c00e6c14bc26c9f990440a515c5fd"},
+    {file = "schwifty-2023.6.0-py3-none-any.whl", hash = "sha256:80d9da775b94a2b6c156d4cf0770d7037fc0195453ef5cff587ff144b56b44a9"},
+    {file = "schwifty-2023.6.0.tar.gz", hash = "sha256:843340a084edd809396955a6320aa0da803dac316c8aeba6e495dceefeecb295"},
 ]
 
 [package.dependencies]
