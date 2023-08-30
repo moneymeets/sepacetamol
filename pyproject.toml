@@ -5,7 +5,7 @@ description = "PAIN Credit Transfer XML file generator"
 authors = ["Yury V. Zaytsev <yury@shurup.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "~3.11"
 
 django = "*"
 django-bootstrap5 = "*"
