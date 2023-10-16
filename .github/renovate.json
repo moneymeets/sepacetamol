@@ -5,6 +5,9 @@
   ],
   "branchPrefix": "feature/renovate/",
   "rangeStrategy": "update-lockfile",
+  "ignoreDeps": [
+    "python"
+  ],
   "packageRules": [
     {
       "groupName": "all",
