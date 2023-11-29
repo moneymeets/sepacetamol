@@ -13,6 +13,10 @@ jobs:
 
       - uses: moneymeets/moneymeets-composite-actions/lint-python@master
 
+      - run: poetry run pytest --cov --cov-fail-under=50
+        env:
+          DJANGO_DEBUG: 1
+
   build-image:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
