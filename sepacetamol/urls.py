@@ -1,8 +1,8 @@
 from django.urls import path
 
-from . import views
+from .views import sepa
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("generate/", views.generate, name="generate"),
+    path("", sepa.index, name="index"),
+    path("generate/", sepa.generate, name="generate"),
 ]
