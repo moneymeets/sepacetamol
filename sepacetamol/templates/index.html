@@ -3,7 +3,9 @@
 {% load static %}
 
 {% block content %}
-    <h1>SEPAcetamol</h1>
+    <div class="alert alert-info" role="alert">
+        For Personio → DATEV converter, <a href="{% url "personio-datev" %}">follow along</a>.
+    </div>
 
     <p>
         Download the <a href="{% static "sepa-xml-template.xlsx" %}">wire table template</a>,
