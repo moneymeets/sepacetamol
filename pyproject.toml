@@ -16,10 +16,29 @@ openpyxl = "*"
 schwifty = "*"
 sepaxml = "*"
 
+pydantic = "*"
+
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "*"
+pytest-django = "*"
+pytest-cov = "*"
 
 ruff = "*"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+filterwarnings = [
+    "ignore:No directory at.*staticfiles:UserWarning",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = [
+    "*/migrations/*",
+    "*/test_*.py",
+    "manage.py"
+]
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
