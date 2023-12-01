@@ -23,13 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: moneymeets/moneymeets-composite-actions/detect-python-version@master
-        id: 'detect-versions'
-
-      - name: Build image
-        run: |
-          docker build \
-            --build-arg PYTHON_VERSION_CONSTRAINT="${{ steps.detect-versions.outputs.python-version-constraint }}" \
-            --build-arg POETRY_VERSION="${{ steps.detect-versions.outputs.poetry-version }}" \
-            -t sepacetamol-ci .
-#          TODO: share image tag when pushing part is implemented
+      - uses: moneymeets/moneymeets-composite-actions/build-and-push-image@master
+        with:
+          ecr_repository: ${{ vars.APPLICATION_ID }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
