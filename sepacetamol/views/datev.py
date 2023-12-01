@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.encoding import smart_str
 from openpyxl.reader.excel import load_workbook
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def float_to_german(value: float) -> str:
@@ -29,6 +29,14 @@ def date_to_datev(d: date) -> str:
     return d.strftime("%Y%m%d")
 
 
+DEFAULT_CONFIG = ConfigDict(
+    populate_by_name=True,
+    validate_default=True,
+    validate_assignment=True,
+    frozen=True,
+)
+
+
 PositiveInt = Annotated[int, Field(gt=0)]
 
 
@@ -36,11 +44,7 @@ class DatevSettings(BaseModel):
     consultant_number: PositiveInt
     client_numer: PositiveInt
 
-    class Config:
-        populate_by_name = True
-        validate_default = True
-        validate_assignment = True
-        frozen = True
+    model_config = DEFAULT_CONFIG
 
 
 class DatevModel(BaseModel):
@@ -50,11 +54,12 @@ class DatevModel(BaseModel):
         datev_writer.writerow(self.model_dump().values())
         return "\n".join(unquote_empty_csv_strings(line) for line in output.getvalue().splitlines())
 
-    class Config:
-        populate_by_name = True
-        validate_default = True
-        validate_assignment = True
-        frozen = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_default=True,
+        validate_assignment=True,
+        frozen=True,
+    )
 
 
 class DatevHeader(DatevModel):
@@ -199,6 +204,30 @@ class DatevBooking(DatevModel):
         return output.getvalue().strip()
 
 
+def get_datev_booking_from_personio(row) -> tuple[date, DatevBooking]:
+    (datum, _, _, umsatz, sh, _, _, gegenkonto, konto, belegfeld_1, buchungstext, *_) = row
+
+    datum = datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
+
+    soll_haben = "S" if not sh else sh
+
+    if umsatz < 0:
+        soll_haben = "H" if soll_haben == "S" else "S"
+
+    return (
+        datum,
+        DatevBooking(
+            umsatz=float_to_german(abs(umsatz)),
+            soll_haben_kz=soll_haben,
+            konto=konto,
+            gegenkonto=gegenkonto,
+            belegdatum=datum.strftime("%d%m"),
+            belegfeld_1=belegfeld_1,
+            buchungstext=buchungstext,
+        ),
+    )
+
+
 def convert_personio_to_datev(request) -> HttpResponse:
     datev_settings = DatevSettings(
         consultant_number=request.POST["consultant-number"],
@@ -210,31 +239,8 @@ def convert_personio_to_datev(request) -> HttpResponse:
     except Exception as e:
         raise ValueError("Personio file could not be loaded, please check the format") from e
 
-    def get_booking(row) -> tuple[date, DatevBooking]:
-        (datum, _, _, umsatz, sh, _, _, gegenkonto, konto, belegfeld_1, buchungstext, *_) = row
-
-        datum = datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
-
-        soll_haben = "S" if not sh else sh
-
-        if umsatz < 0:
-            soll_haben = "H" if soll_haben == "S" else "S"
-
-        return (
-            datum,
-            DatevBooking(
-                umsatz=float_to_german(abs(umsatz)),
-                soll_haben_kz=soll_haben,
-                konto=konto,
-                gegenkonto=gegenkonto,
-                belegdatum=datum.strftime("%d%m"),
-                belegfeld_1=belegfeld_1,
-                buchungstext=buchungstext,
-            ),
-        )
-
     bookings = [
-        get_booking([value.strip() if isinstance(value, str) else value for value in row])
+        get_datev_booking_from_personio([value.strip() if isinstance(value, str) else value for value in row])
         for row in worksheet.iter_rows(min_row=3, values_only=True)
         if any(row)
     ]
@@ -261,9 +267,11 @@ def convert_personio_to_datev(request) -> HttpResponse:
     target_filename = f"EXTF_Personio-{datum.strftime('%Y-%m')}.csv"
 
     contents = "\r\n".join(
-        [header.model_dump_csv()]
-        + [first_booking.model_dump_csv_header()]
-        + [booking.model_dump_csv() for _, booking in bookings],
+        (
+            header.model_dump_csv(),
+            first_booking.model_dump_csv_header(),
+            *(booking.model_dump_csv() for _, booking in bookings),
+        ),
     ).encode("cp1252")
 
     response = HttpResponse(content_type="text/csv")
