@@ -199,6 +199,30 @@ class DatevBooking(DatevModel):
         return output.getvalue().strip()
 
 
+def get_datev_booking_from_personio(row) -> tuple[date, DatevBooking]:
+    (datum, _, _, umsatz, sh, _, _, gegenkonto, konto, belegfeld_1, buchungstext, *_) = row
+
+    datum = datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
+
+    soll_haben = "S" if not sh else sh
+
+    if umsatz < 0:
+        soll_haben = "H" if soll_haben == "S" else "S"
+
+    return (
+        datum,
+        DatevBooking(
+            umsatz=float_to_german(abs(umsatz)),
+            soll_haben_kz=soll_haben,
+            konto=konto,
+            gegenkonto=gegenkonto,
+            belegdatum=datum.strftime("%d%m"),
+            belegfeld_1=belegfeld_1,
+            buchungstext=buchungstext,
+        ),
+    )
+
+
 def convert_personio_to_datev(request) -> HttpResponse:
     datev_settings = DatevSettings(
         consultant_number=request.POST["consultant-number"],
@@ -210,31 +234,8 @@ def convert_personio_to_datev(request) -> HttpResponse:
     except Exception as e:
         raise ValueError("Personio file could not be loaded, please check the format") from e
 
-    def get_booking(row) -> tuple[date, DatevBooking]:
-        (datum, _, _, umsatz, sh, _, _, gegenkonto, konto, belegfeld_1, buchungstext, *_) = row
-
-        datum = datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
-
-        soll_haben = "S" if not sh else sh
-
-        if umsatz < 0:
-            soll_haben = "H" if soll_haben == "S" else "S"
-
-        return (
-            datum,
-            DatevBooking(
-                umsatz=float_to_german(abs(umsatz)),
-                soll_haben_kz=soll_haben,
-                konto=konto,
-                gegenkonto=gegenkonto,
-                belegdatum=datum.strftime("%d%m"),
-                belegfeld_1=belegfeld_1,
-                buchungstext=buchungstext,
-            ),
-        )
-
     bookings = [
-        get_booking([value.strip() if isinstance(value, str) else value for value in row])
+        get_datev_booking_from_personio([value.strip() if isinstance(value, str) else value for value in row])
         for row in worksheet.iter_rows(min_row=3, values_only=True)
         if any(row)
     ]

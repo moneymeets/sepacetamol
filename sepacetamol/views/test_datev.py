@@ -1,7 +1,14 @@
 from datetime import date
 from unittest import TestCase
 
-from sepacetamol.views.datev import DatevBooking, DatevHeader, date_to_datev, float_to_german, unquote_empty_csv_strings
+from sepacetamol.views.datev import (
+    DatevBooking,
+    DatevHeader,
+    date_to_datev,
+    float_to_german,
+    get_datev_booking_from_personio,
+    unquote_empty_csv_strings,
+)
 
 
 class TestDatev(TestCase):
@@ -65,3 +72,36 @@ class TestDatev(TestCase):
 
         self.assertEqual(output_csv_header.strip(), input_obj.model_dump_csv_header().strip())
         self.assertEqual(unquote_empty_csv_strings(output_csv_line.strip()), input_obj.model_dump_csv().strip())
+
+    def test_personio_to_datev_booking(self):
+        mock_row = (
+            "01.06.2023",
+            None,
+            None,
+            123456.78,
+            "H",
+            None,
+            None,
+            "4120",
+            "1755",
+            "202306",
+            "Festbezug Gehaelter",
+            None,
+            None,
+        )
+
+        self.assertEqual(
+            (
+                date(2023, 6, 1),
+                DatevBooking(
+                    umsatz="123456,78",
+                    soll_haben_kz="H",
+                    konto=1755,
+                    gegenkonto=4120,
+                    belegdatum="0106",
+                    belegfeld_1="202306",
+                    buchungstext="Festbezug Gehaelter",
+                ),
+            ),
+            get_datev_booking_from_personio(mock_row),
+        )
