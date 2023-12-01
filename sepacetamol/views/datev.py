@@ -261,9 +261,11 @@ def convert_personio_to_datev(request) -> HttpResponse:
     target_filename = f"EXTF_Personio-{datum.strftime('%Y-%m')}.csv"
 
     contents = "\r\n".join(
-        [header.model_dump_csv()]
-        + [first_booking.model_dump_csv_header()]
-        + [booking.model_dump_csv() for _, booking in bookings],
+        (
+            header.model_dump_csv(),
+            first_booking.model_dump_csv_header(),
+            *(booking.model_dump_csv() for _, booking in bookings),
+        ),
     ).encode("cp1252")
 
     response = HttpResponse(content_type="text/csv")
