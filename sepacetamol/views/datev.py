@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.encoding import smart_str
 from openpyxl.reader.excel import load_workbook
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def float_to_german(value: float) -> str:
@@ -29,6 +29,14 @@ def date_to_datev(d: date) -> str:
     return d.strftime("%Y%m%d")
 
 
+DEFAULT_CONFIG = ConfigDict(
+    populate_by_name=True,
+    validate_default=True,
+    validate_assignment=True,
+    frozen=True,
+)
+
+
 PositiveInt = Annotated[int, Field(gt=0)]
 
 
@@ -36,11 +44,7 @@ class DatevSettings(BaseModel):
     consultant_number: PositiveInt
     client_numer: PositiveInt
 
-    class Config:
-        populate_by_name = True
-        validate_default = True
-        validate_assignment = True
-        frozen = True
+    model_config = DEFAULT_CONFIG
 
 
 class DatevModel(BaseModel):
@@ -50,11 +54,12 @@ class DatevModel(BaseModel):
         datev_writer.writerow(self.model_dump().values())
         return "\n".join(unquote_empty_csv_strings(line) for line in output.getvalue().splitlines())
 
-    class Config:
-        populate_by_name = True
-        validate_default = True
-        validate_assignment = True
-        frozen = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_default=True,
+        validate_assignment=True,
+        frozen=True,
+    )
 
 
 class DatevHeader(DatevModel):
