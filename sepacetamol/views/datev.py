@@ -204,10 +204,26 @@ class DatevBooking(DatevModel):
         return output.getvalue().strip()
 
 
-def get_datev_booking_from_personio(row) -> tuple[date, DatevBooking]:
-    (datum, _, _, umsatz, sh, _, _, gegenkonto, konto, belegfeld_1, buchungstext, *_) = row
+def get_datev_booking_from_personio(row: dict) -> tuple[date, DatevBooking]:
+    datum = row["Datum"]
+    umsatz = row["Umsatz"]
+    sh = row["S/H"]
+    gegenkonto = row["Gegenkonto"]
+    konto = row["Konto"]
+    belegfeld_1 = row.get("Belegfeld 1") or row.get("Beleg Feld 1", "")
+    buchungstext = row["Buchungstext"]
 
-    datum = datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
+    # Personio hacks to support different formats
+    datum = (
+        datetime.strptime(datum, "%d.%m.%Y").replace(tzinfo=ZoneInfo("Europe/Berlin")).date()
+        if isinstance(datum, str)
+        else datum.date()
+    )
+
+    if isinstance(belegfeld_1, float):
+        belegfeld_1 = str(int(belegfeld_1))
+
+    buchungstext = (buchungstext[:57] + "...") if len(buchungstext) > 60 else buchungstext
 
     soll_haben = "S" if not sh else sh
 
@@ -239,11 +255,13 @@ def convert_personio_to_datev(request) -> HttpResponse:
     except Exception as e:
         raise ValueError("Personio file could not be loaded, please check the format") from e
 
-    bookings = [
-        get_datev_booking_from_personio([value.strip() if isinstance(value, str) else value for value in row])
-        for row in worksheet.iter_rows(min_row=3, values_only=True)
+    non_empty_rows = tuple(
+        tuple(value.strip() if isinstance(value, str) else value for value in row)
+        for row in worksheet.iter_rows(values_only=True)
         if any(row)
-    ]
+    )
+
+    bookings = tuple(get_datev_booking_from_personio(dict(zip(non_empty_rows[0], row))) for row in non_empty_rows[1:])
 
     (datum, first_booking), *_ = bookings
 
