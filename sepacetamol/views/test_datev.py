@@ -74,21 +74,15 @@ class TestDatev(TestCase):
         self.assertEqual(unquote_empty_csv_strings(output_csv_line.strip()), input_obj.model_dump_csv().strip())
 
     def test_personio_to_datev_booking(self):
-        mock_row = (
-            "01.06.2023",
-            None,
-            None,
-            123456.78,
-            "H",
-            None,
-            None,
-            "4120",
-            "1755",
-            "202306",
-            "Festbezug Gehaelter",
-            None,
-            None,
-        )
+        mock_booking = {
+            "Datum": "01.06.2023",
+            "Umsatz": 123456.78,
+            "S/H": "H",
+            "Gegenkonto": "4120",
+            "Konto": "1755",
+            "Belegfeld 1": "202306",
+            "Buchungstext": "Festbezug Gehaelter",
+        }
 
         self.assertEqual(
             (
@@ -103,5 +97,5 @@ class TestDatev(TestCase):
                     buchungstext="Festbezug Gehaelter",
                 ),
             ),
-            get_datev_booking_from_personio(mock_row),
+            get_datev_booking_from_personio(mock_booking),
         )
