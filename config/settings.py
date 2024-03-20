@@ -114,7 +114,8 @@ STATIC_URL = "static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
 MESSAGE_TAGS = {
     message_constants.ERROR: "danger",  # Bootstrap error class
 }
+
+SECURE_REDIRECT_EXEMPT = [r"^health\/$"]
