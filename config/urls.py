@@ -16,6 +16,9 @@ Including another URLconf
 
 from django.urls import include, path
 
+from . import views
+
 urlpatterns = [
     path("", include("sepacetamol.urls")),
+    path("health/", views.HealthCheckView.as_view(), name="health"),
 ]
