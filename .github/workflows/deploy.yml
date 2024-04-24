@@ -3,6 +3,11 @@
 
 name: Deploy
 on: [ deployment ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.deployment.environment }}
+  cancel-in-progress: false
+
 jobs:
   deploy-heroku:
     runs-on: ubuntu-22.04
