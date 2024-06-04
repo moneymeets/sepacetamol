@@ -1,0 +1,62 @@
+# This file was added by Pulumi and should not be edited manually. To edit the contents of this file, please go
+# to the github-management project in moneymeets-pulumi and call `pulumi up` after changing the template file.
+
+name: Deploy
+on: [ deployment ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.deployment.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      # ToDo: MD-7185 - can be removed, was used for git push on Heroku
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - uses: moneymeets/moneymeets-composite-actions/set-deployment-status@master
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          state: in_progress
+
+      - uses: moneymeets/action-ecs-deploy@master
+        # ToDo: MD-7185 - condition can be deleted
+        if: contains(fromJSON('["dev"]'), github.event.deployment.environment)
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          ecr_repository: ${{ vars.APPLICATION_ID }}
+          deployment_tag: ${{ vars.DEPLOYMENT_BY_GITHUB_ACTION_TAG }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ vars.AWS_DEFAULT_REGION }}
+
+      # ToDo: MD-7185 - can be deleted
+      - uses: moneymeets/action-heroku-deploy@master
+        if: contains(fromJSON('["test", "live"]'), github.event.deployment.environment)
+        with:
+          HEROKU_APP: sepacetamol
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
+
+      - uses: getsentry/action-release@v1
+        if: github.event.deployment.payload.triggered_by != 'Pulumi'
+        env:
+          SENTRY_ORG: moneymeets
+          SENTRY_PROJECT: sepacetamol
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_MONEYMEETS_TOKEN }}
+        with:
+          environment: ${{ github.event.deployment.environment }}
+
+      - uses: moneymeets/moneymeets-composite-actions/set-deployment-status@master
+        if: always()
+        with:
+          environment: ${{ github.event.deployment.environment }}
+          state: ${{ job.status == 'success' && 'success' || 'failure' }}
