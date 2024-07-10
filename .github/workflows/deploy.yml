@@ -30,7 +30,7 @@ jobs:
 
       - uses: moneymeets/action-ecs-deploy@master
         # ToDo: MD-7185 - condition can be deleted
-        if: contains(fromJSON('["dev"]'), github.event.deployment.environment)
+        if: contains(fromJSON('["dev", "test"]'), github.event.deployment.environment)
         with:
           environment: ${{ github.event.deployment.environment }}
           ecr_repository: ${{ vars.APPLICATION_ID }}
@@ -41,7 +41,7 @@ jobs:
 
       # ToDo: MD-7185 - can be deleted
       - uses: moneymeets/action-heroku-deploy@master
-        if: contains(fromJSON('["test", "live"]'), github.event.deployment.environment)
+        if: contains(fromJSON('["live"]'), github.event.deployment.environment)
         with:
           HEROKU_APP: sepacetamol
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
