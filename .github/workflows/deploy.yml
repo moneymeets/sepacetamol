@@ -26,6 +26,7 @@ jobs:
         with:
           environment: ${{ github.event.deployment.environment }}
           ecr_repository: ${{ vars.APPLICATION_ID }}
+          desired_count: 2
           deployment_tag: ${{ vars.DEPLOYMENT_BY_GITHUB_ACTION_TAG }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
