@@ -6,13 +6,15 @@ FROM python:${PYTHON_VERSION_CONSTRAINT}-slim-bookworm as python-base
 
 LABEL maintainer="moneymeets GmbH <admin@moneymeets.com>"
 
+ARG SENTRY_RELEASE
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     APP_PATH="/opt/app" \
     POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
-    VENV_PATH="/opt/app/.venv"
+    VENV_PATH="/opt/app/.venv" \
+    SENTRY_RELEASE=$SENTRY_RELEASE
 
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
