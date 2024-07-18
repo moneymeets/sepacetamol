@@ -16,15 +16,3 @@ jobs:
       - run: poetry run pytest --cov --cov-fail-under=50
         env:
           DJANGO_DEBUG: 1
-
-  build-image:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: moneymeets/moneymeets-composite-actions/build-and-push-image@master
-        with:
-          ecr_repository: ${{ vars.APPLICATION_ID }}
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
