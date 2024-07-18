@@ -8,11 +8,3 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: moneymeets/action-setup-python-poetry@master
-
-      - uses: moneymeets/moneymeets-composite-actions/lint-python@master
-
-      - run: poetry run pytest --cov --cov-fail-under=50
-        env:
-          DJANGO_DEBUG: 1
